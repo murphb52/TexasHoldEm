@@ -18,6 +18,13 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -27,7 +34,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity implements OnSeekBarChangeListener{
 
-	TextView t, card1,card2,chipsTextView, flop1Text ,flop2Text ,flop3Text, infoText,riverText,runText,pickBet;
+	TextView t, card1,card2,chipsTextView, flop1Text ,flop3Text ,flop2Text, infoText,riverText,runText,pickBet;
 	ImageView cardImage1,cardImage2,cardBack1,cardBack2, flopImage1, flopImage2, flopImage3,riverImage,runImage, flopback1,flopback2,flopback3,riverBack,runBack;
 	Card a,b, flop1,flop2,flop3, river, run;
 	Socket socket;
@@ -37,8 +44,11 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 	ObjectInputStream ois;
 	SeekBar bar;
 	String gameStatus,Player,whosGo, address;
-	Boolean inGame;
+	Boolean inGame,betting;
 	Button startButton;
+	Button raiseBet, lowerBet, betButton, callButton, foldButton;
+	Animation fadeIn,fadeOut;
+	AnimationSet fadeInSet, fadeOutSet; 
 	@Override
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -46,58 +56,97 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 		setContentView(R.layout.activity_main);
 		//address = "192.168.1.16";
 		inGame = false;
-		address = "136.206.18.44";
+		betting = false;
+		address = "192.168.1.16";
 		gameStatus= "No Server";
-		bar = (SeekBar)findViewById(R.id.seekBar1); // make seekbar object
+		bar = (SeekBar)findViewById(R.id.seekBar); // make seekbar object
 		bar.setOnSeekBarChangeListener(this);
 
 		t = (TextView) findViewById(R.id.text);
+		t.setTextColor(Color.WHITE);
 		t.setMovementMethod(new ScrollingMovementMethod());
 		chipCount = 10000;
-		chipsTextView = (TextView) findViewById(R.id.chips);
+		chipsTextView = (TextView) findViewById(R.id.chipsText);
 		chipsTextView.setText("Chips: " + chipCount);
-		cardBack1 = (ImageView) findViewById(R.id.imageView1);
-		cardBack2 = (ImageView) findViewById(R.id.imageView2);
-		card1 = (TextView) findViewById(R.id.card1);
+		chipsTextView.setTextColor(Color.WHITE);
+		cardBack1 = (ImageView) findViewById(R.id.handBack1);
+		cardBack2 = (ImageView) findViewById(R.id.handBack2);
+		card1 = (TextView) findViewById(R.id.handValueText1);
 		card1.setVisibility(View.INVISIBLE);
-		card2 = (TextView) findViewById(R.id.card2);
+		card2 = (TextView) findViewById(R.id.handValueText2);
 		card2.setVisibility(View.INVISIBLE);
-		cardImage1 = (ImageView) findViewById(R.id.imageView8);
+		cardImage1 = (ImageView) findViewById(R.id.handSuite1);
 		cardImage1.setVisibility(View.INVISIBLE);
-		cardImage2 = (ImageView) findViewById(R.id.imageView9);
+		cardImage2 = (ImageView) findViewById(R.id.handSuite2);
 		cardImage2.setVisibility(View.INVISIBLE);
 
 		infoText = (TextView) findViewById(R.id.textView1);
 
-		flopImage1 = (ImageView) findViewById(R.id.flopimage1);
-		flopImage2 = (ImageView) findViewById(R.id.flopimage2);
-		flopImage3= (ImageView) findViewById(R.id.flopimage3);
-		riverImage = (ImageView) findViewById(R.id.riverCardImage);
-		runImage = (ImageView) findViewById(R.id.runCardImage);
 		
+		// Start animating the image
+		//final ImageView splash = (ImageView) findViewById(R.id.splash);
+		//flopImage1.startAnimation(anim);
+
+		fadeIn = new AlphaAnimation(0, 1);
+		fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
+		fadeIn.setDuration(3000);
+		
+		
+
+		fadeOut = new AlphaAnimation(1, 0);
+		fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
+		fadeOut.setStartOffset(0);
+		fadeOut.setDuration(1000);
+
+		AnimationSet animation = new AnimationSet(false); //change to false
+		fadeInSet = new AnimationSet(false);
+		fadeInSet.addAnimation(fadeIn);
+		fadeOutSet = new AnimationSet(false);
+		fadeOutSet.addAnimation(fadeOut);
+		
+		cardBack1.setAnimation(fadeInSet);
+		cardBack2.setAnimation(fadeInSet);
+		cardBack1.animate();
+		cardBack2.animate();
+		
+
+		flopImage1 = (ImageView) findViewById(R.id.tableCardSuite1);
+		flopImage2 = (ImageView) findViewById(R.id.tableCardSuite2);
+		flopImage3= (ImageView) findViewById(R.id.tableCardSuite3);
+		riverImage = (ImageView) findViewById(R.id.tableCardSuite4);
+		runImage = (ImageView) findViewById(R.id.tableCardSuite5);
+		
+		
+
 		flopImage1.setVisibility(View.INVISIBLE);
 		flopImage2.setVisibility(View.INVISIBLE);
 		flopImage3.setVisibility(View.INVISIBLE);
 		riverImage.setVisibility(View.INVISIBLE);
 		runImage.setVisibility(View.INVISIBLE);
 
-		flop1Text = (TextView) findViewById(R.id.flop1);
-		flop2Text = (TextView) findViewById(R.id.flop2);
-		flop3Text = (TextView) findViewById(R.id.flop3);
-		riverText = (TextView) findViewById(R.id.riverCardText);
-		runText = (TextView) findViewById(R.id.runCardText);
-		
+		flop1Text = (TextView) findViewById(R.id.tableValueText1);
+		flop3Text = (TextView) findViewById(R.id.tableValueText3);
+		flop2Text = (TextView) findViewById(R.id.tableValueText2);
+		riverText = (TextView) findViewById(R.id.tableValueText4);
+		runText = (TextView) findViewById(R.id.tableValueText5);
+
 		flop1Text.setVisibility(View.INVISIBLE);
-		flop2Text.setVisibility(View.INVISIBLE);
 		flop3Text.setVisibility(View.INVISIBLE);
+		flop2Text.setVisibility(View.INVISIBLE);
 		riverText.setVisibility(View.INVISIBLE);
 		runText.setVisibility(View.INVISIBLE);
 
-		flopback1 = (ImageView) findViewById(R.id.imageView3);
-		flopback2 = (ImageView) findViewById(R.id.imageView4);
-		flopback3 = (ImageView) findViewById(R.id.imageView5);
-		riverBack = (ImageView) findViewById(R.id.imageView6);
-		runBack = (ImageView) findViewById(R.id.imageView7);
+		flopback1 = (ImageView) findViewById(R.id.tableCardBack1);
+		flopback2 = (ImageView) findViewById(R.id.tableCardBack2);
+		flopback3 = (ImageView) findViewById(R.id.tableCardBack3);
+		riverBack = (ImageView) findViewById(R.id.tableCardBack4);
+		runBack = (ImageView) findViewById(R.id.tableCardBack5);
+		
+		flopback1.setAnimation(fadeInSet);
+		flopback2.setAnimation(fadeInSet);
+		flopback3.setAnimation(fadeInSet);
+		riverBack.setAnimation(fadeInSet);
+		runBack.setAnimation(fadeInSet);
 
 		minStake = 1;
 
@@ -108,10 +157,10 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 		flop3 = new Card(0,"Clubs");
 		river = new Card(0, "Clubs");
 		run = new Card(0, "Clubs");
-		
-		pickBet = (TextView) findViewById(R.id.textView2);
+
+		pickBet = (TextView) findViewById(R.id.betNotice);
 		pickBet.setText(""+ (chipCount));
-		
+
 		startButton =(Button) findViewById(R.id.send);
 		//t.append("\nStart");
 		startButton.setOnClickListener(new OnClickListener() {		 
@@ -124,61 +173,82 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 			} 
 		});
 
-		Button raiseBet = (Button) findViewById(R.id.button2);
-		Button lowerBet = (Button) findViewById(R.id.button4);
+		raiseBet = (Button) findViewById(R.id.plusButton);
+		lowerBet = (Button) findViewById(R.id.minusButton);
 
 		raiseBet.setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
 				bar.setProgress(bar.getProgress()+5);
+
+
 			}
 		});
 		lowerBet.setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
 				bar.setProgress(bar.getProgress()-5);
+
 			}
 		});
 
-		Button betButton = (Button) findViewById(R.id.betbutton);
+		betButton = (Button) findViewById(R.id.betbutton);
 		betButton.setOnClickListener(new OnClickListener(){
 			public void onClick(View arg0) {
-				try {
-					if(((bar.getProgress()*chipCount)/100) >= minStake){
-						oos.writeObject((bar.getProgress()*chipCount)/100);
-						chipCount = chipCount - ((bar.getProgress()*chipCount)/100);
-						chipsTextView.setText("Chips: " + chipCount);
-					}else Toast.makeText(getApplicationContext(), "Bet must be larger than minimum stake:" + minStake, Toast.LENGTH_LONG).show();
-				} catch (IOException e) {
-					e.printStackTrace();
+				if(betting){
+					try {
+						if(((bar.getProgress()*chipCount)/100) >= minStake){
+							int bet = (bar.getProgress()*chipCount)/100;
+							oos.writeObject(bet);
+							chipCount = chipCount - bet;
+							chipsTextView.setText("Chips: " + chipCount);
+							betting = false;
+							addToTextView("You bet " + bet );
+							addToTextView("Waiting on other players bets");
+						}else Toast.makeText(getApplicationContext(), "Bet must be larger than minimum stake:" + minStake, Toast.LENGTH_LONG).show();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});
 
-		Button callButton = (Button) findViewById(R.id.callButton);
+		callButton = (Button) findViewById(R.id.callButton);
 		callButton.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
-				try {
-					//if(((bar.getProgress()*chipCount)/100) == minStake){
+				if(betting){
+					try {
+						//if(((bar.getProgress()*chipCount)/100) == minStake){
 						oos.writeObject(minStake);
 						chipCount = chipCount - minStake;
 						chipsTextView.setText("Chips: " + chipCount);
-					//}
-				} catch (IOException e) {
-					e.printStackTrace();
+						betting = false;
+						addToTextView("You called " + minStake );
+						addToTextView("Waiting on other players bets");
+						//}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});
 
-		Button foldButton = (Button) findViewById(R.id.foldButton);
+		foldButton = (Button) findViewById(R.id.foldButton);
 		foldButton.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
-				try {
-					oos.writeObject(-1);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}				
+				if(betting){
+					try {
+						oos.writeObject(-1);
+						betting = false;
+						addToTextView("You folded!");
+						addToTextView("Waiting for the end of the hand");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}				
+				}
 			}
 
 		});
+
+
 	}
 
 	private class retrieveBet extends AsyncTask<String,Void,String>{
@@ -187,7 +257,7 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 			try {
 				oos.writeObject("Send Min Stake");
 				int temp = (Integer) ois.readObject();
-				
+
 				if(temp == -1)
 					gameStatus = "After Bet";
 				else minStake = temp;
@@ -206,13 +276,15 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 			// TODO Auto-generated method stub
 			//Toast.makeText(getBaseContext(), (minStake + " to call" ), Toast.LENGTH_LONG).show();
 			//infoText.setText("Current chips to call is :" + minStake);
-			t.append("Current chips to call is :" + minStake +"\n");
-			
+			//addToTextView("Current chips to call is :" + minStake);
+			//t.append("Current chips to call is :" + minStake +"\n");
+
 			if(gameStatus.compareTo("After Bet") != 0){
 				gameStatus = "Sent Bet waiting for server";
-				Toast.makeText(getBaseContext(), ("Time to bet\n" + minStake + " to call" ), Toast.LENGTH_SHORT).show();
-				
-			}
+				Toast.makeText(getBaseContext(), ("Your turn to bet! " + minStake + " to call" ), Toast.LENGTH_SHORT).show();
+				addToTextView("Your turn to bet! " + minStake + " to call");
+				betting = true;
+			}else betting = false;
 			new waitForServer().execute();
 		}
 	}
@@ -223,7 +295,6 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			try {
-				System.out.println("IM HERE");
 				flop1 = (Card) ois.readObject();
 				flop2 = (Card) ois.readObject();
 				flop3 = (Card) ois.readObject();
@@ -247,7 +318,8 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 		protected void onPostExecute(String result) {
 			TextView txt = (TextView) findViewById(R.id.text);
 			System.out.println(flop1.Number + " of " + flop1.suite);
-			t.append("\n"+flop1.toString() + flop2.toString() + flop3.toString());
+			//addToTextView(flop1.toString() + flop2.toString() + flop3.toString());
+			//t.append("\n"+flop1.toString() + flop2.toString() + flop3.toString());
 
 			flopback1.setImageResource(R.drawable.card_small);
 			flopback2.setImageResource(R.drawable.card_small);
@@ -259,8 +331,8 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 			flopImage3.setVisibility(View.VISIBLE);
 
 			flop1Text.setVisibility(View.VISIBLE);
-			flop2Text.setVisibility(View.VISIBLE);
 			flop3Text.setVisibility(View.VISIBLE);
+			flop2Text.setVisibility(View.VISIBLE);
 
 			flop1Text.setText(flop1.getCardValue() + "");
 			flop2Text.setText(flop2.getCardValue() + "");
@@ -274,7 +346,7 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 			checkCardColor(flop2Text, flop2);
 			checkCardColor(flop3Text, flop3);
 			gameStatus = "Ready For Betting";
-			
+
 			new waitForServer().execute();
 		}
 
@@ -309,6 +381,14 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 
 		@Override
 		protected void onPostExecute(String result) {
+			resetCardUI();
+			//cardBack2.setAnimation(fadeInSet);
+			//cardBack1.setAnimation(fadeInSet);
+			//cardBack1.setAnimation(fadeOut);
+			//cardBack2.setAnimation(fadeOut);
+			//cardBack1.animate();
+			//cardBack2.animate();
+			
 			TextView txt = (TextView) findViewById(R.id.text);
 			System.out.println(a.Number + " of " + a.suite);
 			card1.setText(a.getCardValue() + "");
@@ -337,6 +417,8 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 					e.printStackTrace();
 				}
 			}
+			
+			
 
 			//Toast.makeText(getBaseContext(), (minStake + "?" + (bar.getProgress()*chipCount)/100) + "!" + PlayerNo, Toast.LENGTH_LONG).show();
 			new waitForServer().execute();
@@ -361,17 +443,18 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 				if(gameStatus.compareTo("No Server") == 0){
 
 					try {
-						inGame = true;
-						InetAddress ia = InetAddress.getByName("192.168.1.21");
+						
+						InetAddress ia = InetAddress.getByName("192.168.1.13");
 						socket = new Socket(ia, 53535);
 						// Send a message to the client application
 						oos = new ObjectOutputStream(socket.getOutputStream());
 
 						// Read and display the response message sent by server application
 						ois= new ObjectInputStream(socket.getInputStream());
-
+						
 						oos.writeObject("Setup");
-						gameStatus = (String) ois.readObject();
+						
+						//gameStatus = "Connected To Sever";
 					} catch (UnknownHostException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -379,6 +462,8 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+				}else if(gameStatus.compareTo("Connected To Server") == 0){
+					gameStatus = (String) ois.readObject();
 				}else if(gameStatus.compareTo("Ready For Cards") == 0){
 					oos.writeObject("Im ready for Cards Baby");
 					gameStatus = (String) ois.readObject();
@@ -399,6 +484,8 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}catch(NullPointerException e){
+				gameStatus = "Something went Wrong";
 			}
 			return null;
 		}
@@ -406,10 +493,14 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 		@Override
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
-
-			if(gameStatus.compareTo("Take Hands") == 0){
-
-				resetCardUI();
+			inGame = true;
+			if(gameStatus.compareTo("No Server") == 0){
+				addToTextView("You are connected to the server");
+				addToTextView("Please wait while other players Connect");
+				gameStatus = "Connected To Server";
+				new waitForServer().execute();
+			}
+			else if(gameStatus.compareTo("Take Hands") == 0){
 				new retrieveCard().execute();
 			}else if(gameStatus.compareTo("Sending Flop") == 0){
 				new retrieveFlop().execute();
@@ -430,6 +521,11 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 				//Toast.makeText(getBaseContext(), gameStatus, Toast.LENGTH_LONG).show();
 				gameStatus = "Ready For Cards";
 				new waitForServer().execute();
+			}else if(gameStatus.compareTo("Something went Wrong")==0){
+				Toast.makeText(getApplicationContext(), "Could not find Server", Toast.LENGTH_LONG).show();
+				gameStatus = "No Server";
+				inGame = false;
+				
 			}
 			super.onPostExecute(result);
 		}
@@ -461,21 +557,22 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 		protected void onPostExecute(String result) {
 			TextView txt = (TextView) findViewById(R.id.text);
 			System.out.println(flop1.Number + " of11 " + flop1.suite);
-			t.append("\n"+river.toString());
+			//addToTextView(river.toString());
+			//t.append("\n"+river.toString());
 
 			riverBack.setImageResource(R.drawable.card_small);
 
 			riverImage.setVisibility(View.VISIBLE);
-	
+
 			riverText.setVisibility(View.VISIBLE);
-			
+
 			riverText.setText(river.getCardValue() + "");
-			
+
 			assignSuitImage(riverImage, river, "Small");
-			
+
 			checkCardColor(riverText, river);
 			gameStatus = "Ready For Betting";
-			
+
 			new waitForServer().execute();
 		}
 
@@ -507,18 +604,19 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 		protected void onPostExecute(String result) {
 			TextView txt = (TextView) findViewById(R.id.text);
 			System.out.println(flop1.Number + " of11 " + flop1.suite);
-			t.append("\n"+run.toString());
+			//addToTextView(run.toString());
+			//t.append("\n"+run.toString());
 
 			runBack.setImageResource(R.drawable.card_small);
 
 			runImage.setVisibility(View.VISIBLE);
-	
+
 			runText.setVisibility(View.VISIBLE);
-			
+
 			runText.setText(run.getCardValue() + "");
-			
+
 			assignSuitImage(runImage, run, "Small");
-			
+
 			checkCardColor(runText, run);
 			gameStatus = "Ready For Betting";
 
@@ -527,7 +625,7 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 
 
 	}
-	
+
 	private class showWinner extends AsyncTask<String,Void,String>{
 		String winner;
 		@Override
@@ -535,7 +633,14 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 			// TODO Auto-generated method stub
 			try {
 				oos.writeObject("Ready for Winner");
+				int hasWon = (Integer) ois.readObject();
 				winner = (String) ois.readObject();
+
+				if(hasWon == 1){
+					int potWon = (Integer) ois.readObject(); 
+					chipCount = chipCount + potWon;
+				}
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -543,28 +648,39 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
-			Toast.makeText(getBaseContext(), winner, Toast.LENGTH_SHORT).show();
+			chipsTextView.setText("Chips: " + chipCount);
+			//Toast.makeText(getBaseContext(), winner, Toast.LENGTH_SHORT).show();
+			addToTextView(winner);
+			addToTextView("New game will start in 5 seconds\nEnd of Hand!");
 			inGame = false;
-			gameStatus = "No Server";
+			gameStatus = "Take Hands";
+			Toast.makeText(getApplication(), winner + "\nNew game starts in a few seconds", Toast.LENGTH_LONG).show();
 			new waitForServer().execute();
 			super.onPostExecute(result);
 		}
-		
+
 	}
-	
+
 	@Override
 	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 		// TODO Auto-generated method stub
 		//t.append("Textasd\n");
 		pickBet.setText(""+ (progress * chipCount)/100);
 
+	}
+
+	public void addToTextView(String string) {
+		// TODO Auto-generated method stub
+		CharSequence temp =  t.getText();
+		string = string + "\n" + temp;
+		t.setText(string);
 	}
 
 	public void resetCardUI() {
@@ -579,26 +695,26 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener{
 		riverImage.setVisibility(View.INVISIBLE);
 		runImage.setVisibility(View.INVISIBLE);
 		flop1Text.setVisibility(View.INVISIBLE);
-		flop2Text.setVisibility(View.INVISIBLE);
 		flop3Text.setVisibility(View.INVISIBLE);
+		flop2Text.setVisibility(View.INVISIBLE);
 		riverText.setVisibility(View.INVISIBLE);
 		runText.setVisibility(View.INVISIBLE);
 
-		
+
 		riverBack.setImageResource(R.drawable.cardbacksmall);
 		runBack.setImageResource(R.drawable.cardbacksmall);
 		flopback1.setImageResource(R.drawable.cardbacksmall);
 		flopback2.setImageResource(R.drawable.cardbacksmall);
 		flopback3.setImageResource(R.drawable.cardbacksmall);
 
-		
-		a = new Card();
+
+		/*a = new Card();
 		b = new Card();
 		flop1 = new Card(0,"Clubs");
 		flop2 = new Card(0,"Clubs");
 		flop3 = new Card(0,"Clubs");
 		river = new Card(0, "Clubs");
-		run = new Card(0, "Clubs");
+		run = new Card(0, "Clubs");*/
 	}
 
 	@Override

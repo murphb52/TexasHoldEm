@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true" tools:context=".MainActivity">
+    
+<RelativeLayout android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background_felt"
+     >
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="fill_parent"
+        android:layout_height="20dp"
+        android:maxLines="3"
+        android:minHeight="120dp"
+        android:scrollbars="vertical" />
+
+    <Button
+        android:id="@+id/send"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/text"
+        android:layout_marginTop="33dp"
+        android:text="Send" />
+
+    <TextView
+        android:id="@+id/textin"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/text"
+        android:layout_marginTop="16dp" />
+
+    <ImageView
+        android:id="@+id/handBack2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/handBack1"
+        android:layout_marginRight="36dp"
+        android:src="@drawable/cardback" />
+
+    <ImageView
+        android:id="@+id/tableCardBack1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/handBack1"
+        android:layout_below="@+id/send"
+        android:layout_marginTop="114dp"
+        android:src="@drawable/cardbacksmall" />
+
+    <ImageView
+        android:id="@+id/tableCardBack5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/handBack2"
+        android:layout_alignTop="@+id/tableCardBack4"
+        android:src="@drawable/cardbacksmall" />
+
+    <ImageView
+        android:id="@+id/tableCardBack4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/handBack2"
+        android:layout_alignTop="@+id/tableCardBack3"
+        android:layout_marginLeft="37dp"
+        android:src="@drawable/cardbacksmall" />
+
+    <ImageView
+        android:id="@+id/tableCardBack3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tableCardBack2"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/cardbacksmall" />
+
+    <ImageView
+        android:id="@+id/tableCardBack2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/handBack1"
+        android:layout_alignTop="@+id/tableCardBack1"
+        android:layout_marginRight="40dp"
+        android:src="@drawable/cardbacksmall" />
+
+    <ImageView
+        android:id="@+id/handBack1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tableCardBack1"
+        android:layout_marginTop="34dp"
+        android:layout_toLeftOf="@+id/tableCardBack3"
+        android:src="@drawable/cardback" />
+
+    <ImageView
+        android:id="@+id/handSuite2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/handBack2"
+        android:layout_alignLeft="@+id/handBack2"
+        android:scaleX=".80"
+        android:scaleY=".80"
+        android:src="@drawable/heart" />
+
+    <ImageView
+        android:id="@+id/handSuite1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/handBack1"
+        android:layout_below="@+id/handValueText1"
+        android:scaleX=".80"
+        android:scaleY=".80"
+        android:src="@drawable/heart" />
+
+    <TextView
+        android:id="@+id/handValueText1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/handValueText2"
+        android:layout_alignBottom="@+id/handValueText2"
+        android:layout_alignRight="@+id/tableCardBack1"
+        android:text="0"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="75sp" />
+
+    <TextView
+        android:id="@+id/handValueText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/handSuite2"
+        android:layout_alignLeft="@+id/tableCardBack4"
+        android:text="0"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="75sp" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/handBack1"
+        android:layout_alignRight="@+id/handBack2"
+        android:layout_below="@+id/handBack2"
+        android:layout_marginTop="18dp" />
+
+    <Button
+        android:id="@+id/foldButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/betButton"
+        android:layout_alignBottom="@+id/betButton"
+        android:layout_alignParentRight="true"
+        android:text="Fold" />
+
+    <TextView
+        android:id="@+id/chipsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tableCardBack5"
+        android:layout_below="@+id/send"
+        android:layout_marginTop="43dp"
+        android:text="Chips"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <Button
+        android:id="@+id/plusButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/minusButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/seekBar"
+        android:layout_toRightOf="@+id/seekBar"
+        android:text="+" />
+
+    <Button
+        android:id="@+id/minusButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/seekBar"
+        android:layout_toLeftOf="@+id/seekBar"
+        android:text="-" />
+
+    <TextView
+        android:id="@+id/tableValueText1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tableCardBack1"
+        android:layout_alignTop="@+id/tableCardBack1"
+        android:text="1"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/tableValueText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tableCardBack2"
+        android:layout_alignTop="@+id/tableCardBack2"
+        android:text="0"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/tableValueText3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tableCardBack3"
+        android:layout_alignTop="@+id/tableCardBack3"
+        android:text="1"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="22sp" />
+
+    <ImageView
+        android:id="@+id/tableCardSuite1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tableCardBack1"
+        android:layout_alignRight="@+id/tableCardBack1"
+        android:src="@drawable/heartsmall" />
+
+    <ImageView
+        android:id="@+id/tableCardSuite2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/handBack1"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/heartsmall" />
+
+    <ImageView
+        android:id="@+id/tableCardSuite3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/handBack1"
+        android:layout_alignRight="@+id/tableCardBack2"
+        android:src="@drawable/heartsmall" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/chipsText"
+        android:layout_alignRight="@+id/checkButton" />
+
+    <Button
+        android:id="@+id/betButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="19dp"
+        android:text="Bet" />
+
+    <Button
+        android:id="@+id/checkButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/foldButton"
+        android:layout_alignBottom="@+id/foldButton"
+        android:layout_alignRight="@+id/handValueText2"
+        android:text="Check" />
+
+    <Button
+        android:id="@+id/callButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/checkButton"
+        android:layout_alignRight="@+id/handSuite1"
+        android:text="Call" />
+
+    <TextView
+        android:id="@+id/tableValueText5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tableCardBack5"
+        android:layout_alignTop="@+id/tableCardBack5"
+        android:text="1"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="22sp" />
+
+    <ImageView
+        android:id="@+id/tableCardSuite4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/handBack1"
+        android:layout_alignRight="@+id/tableCardBack4"
+        android:src="@drawable/heartsmall" />
+
+    <ImageView
+        android:id="@+id/tableCardSuite5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/handBack1"
+        android:layout_alignRight="@+id/tableCardBack5"
+        android:src="@drawable/heartsmall" />
+
+    <TextView
+        android:id="@+id/tableValueText4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tableCardBack4"
+        android:layout_toLeftOf="@+id/textView1"
+        android:text="1"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/betNotice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/handBack1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="21dp"
+        android:text="TextView" />
+
+</RelativeLayout>
+</ScrollView>

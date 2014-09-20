@@ -4,57 +4,18 @@ import java.io.Serializable;
 public class Player implements Observer, Cloneable, Serializable {
 	//A Player is an object with a name and 2 cards
 	String name;
-	String address;
-	
 	Card card1;
 	Card card2;
-	int chipCount;
-	Card[] cards = new Card[7];
-	int index = 0;
-	private int [] rank;
 	
-	public Player(){
+	Player(){
 		card1 = new Card();
 		card2 = new Card();
-		cards = new Card[7];
-		index = 0;
 	}
 	
-	public Player(String a){
+	Player(String a){
 		name = a;
-		
 		card1 = new Card();
 		card2 = new Card();
-		cards = new Card[7];
-		for(int i = 0; i < 7; i++)
-			cards[i] = new Card(0,"Diamonds");
-		
-		index = 0;
-	}
-	
-	public Player(String a, String b, int c){
-		name = a;
-		address = b;
-		card1 = new Card();
-		card2 = new Card();
-		chipCount = c;
-	}
-
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		int [] rank = HandEvaluator.evaluate7(cards);
-		String rankString = HandEvaluator.getRank(rank);
-		String s = name + " at " + address + "\nChip Count:" + chipCount +"\n"+
-				cards[0].toString() + "\n" +
-				cards[1].toString() + "\n" +
-				cards[2].toString() + "\n" +
-				cards[3].toString() + "\n" +
-				cards[4].toString() + "\n" +
-				cards[5].toString() + "\n" +
-				cards[6].toString() + "\n" + rankString;
-		
-		return s;
 	}
 
 	//Displaying the Player and their cards
@@ -128,51 +89,6 @@ public class Player implements Observer, Cloneable, Serializable {
 	public void dealSecondCard(DeckOfCards d) {
 		card2 = (Card) d.deck[d.cardsDealt].clone();
 		d.cardsDealt++;
-	}
-
-	public void setCardOne(Card card) {
-		card1 = (Card) card.clone();
-	}
-	
-	public void setCardTwo(Card card) {
-		card2 = (Card) card.clone();
-	}
-	
-	public void addCard(Card card){
-		Card temp = (Card) card.clone();
-		cards[index] = new Card();
-		cards[index] = temp;
-		index++;
-		//System.out.println("Index is " +index);
-	}
-	
-	public void addFlop(Card card1, Card card2, Card card3){
-		addCard(card1);
-		addCard(card2);
-		addCard(card3);
-
-		//System.out.println("Index is " +index);
-	}
-	
-	public void calculateRank(){
-		setRank(HandEvaluator.evaluate7(cards));
-	}
-
-	public int [] getRank() {
-		return rank;
-	}
-
-	public void setRank(int [] rank) {
-		this.rank = rank;
-	}
-
-	public void resetCards() {
-		// TODO Auto-generated method stub
-		for(int i = 0; i < 7; i++)
-			cards[i] = null;
-		
-		index = 0;
-		
 	}
 		
 }
